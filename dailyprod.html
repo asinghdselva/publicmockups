@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOM Process Requirement Master</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f9fafb;
+    }
+    .table thead th {
+      background-color: #005b8f;
+      color: white;
+      text-align: center;
+    }
+    .table td, .table th {
+      text-align: center;
+      vertical-align: middle;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .form-select {
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h4 class="mb-4 text-primary">BOM Process Requirement Master</h4>
+
+  <!-- BOM Selection -->
+  <div class="mb-4">
+    <label for="bomSelect" class="form-label fw-bold">Select BOM:</label>
+    <select id="bomSelect" class="form-select d-inline-block">
+      <option value="">-- Choose BOM --</option>
+      <option value="BOM001">BOM001 - Sports Shoe</option>
+      <option value="BOM002">BOM002 - Leather Formal</option>
+      <option value="BOM003">BOM003 - Casual Sneaker</option>
+    </select>
+  </div>
+
+  <!-- Process Table -->
+  <table class="table table-bordered table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Process</th>
+        <th>Material</th>
+        <th>Dies</th>
+        <th>Last</th>
+        <th>Sample Approval</th>
+        <th>Final Approval</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Cutting</td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox" checked></td>
+      </tr>
+      <tr>
+        <td>Preparation</td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox"></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+      </tr>
+      <tr>
+        <td>Stitching</td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+      </tr>
+      <tr>
+        <td>Lasting</td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+      </tr>
+      <tr>
+        <td>Packing</td>
+        <td><input type="checkbox" checked></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+        <td><input type="checkbox" disabled></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="text-end mt-3">
+    <button class="btn btn-primary">Save</button>
+    <button class="btn btn-secondary">Cancel</button>
+  </div>
+</div>
+
+</body>
+</html>

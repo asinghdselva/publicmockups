@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Capacity Master (Weekly Dates)</title>
+    <style>
+        /* ========================================= */
+        /* === 1. Original User Report Template CSS (Modified/Cleaned) === */
+        /* ========================================= */
+        
+        #rptbody {
+            margin: 0;
+            color: #333;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* --- Report Table Styles (Kept for compatibility, though grid is used) --- */
+        #rptbody table {
+            color: #333;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            padding: 2px;
+            margin-bottom: 20px;
+        }
+
+        #rptbody table td, #rptbody table tr {
+            border: 1px solid #CCC;
+            height: 22px;
+            padding-right: 4px;
+            padding-left: 4px;
+        }
+        
+        #rptbody table th {
+            background: #F3F3F3;
+            font-weight: bold;
+            border-color: #ccc;
+        }
+
+        #rptbody table td {
+            background: #FAFAFA; /* Lighter grey background */
+        }
+        
+        #rptbody .process-group th {
+            background-color: #cceeff;
+            color: #000;
+            font-size: 12px;
+        }
+        
+        /* --- Header Layout Styles (Simplified for filters) --- */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #F3F3F3;
+            border: 1px solid #CCC;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .column-logo {
+            width: 20%;
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+            min-width: 150px;
+        }
+        
+        .column-header {
+            display: flex;
+            gap: 20px;
+            width: 80%;
+            justify-content: flex-end;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        .column-header select {
+            padding: 5px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 100px;
+            font-size: 12px;
+        }
+
+        /* ========================================= */
+        /* === 2. New 52-Week Grid Styles (Adjusted for Date) === */
+        /* ========================================= */
+
+        .week-grid-container {
+            border: 1px solid #004d99;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-title {
+            background-color: #004d99;
+            color: white;
+            font-weight: bold;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            border-bottom: 2px solid #003366;
+        }
+
+        .capacity-grid {
+            display: grid;
+            /* 10 columns as requested, flexible width for responsiveness */
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); 
+            /* On larger screens, force 10 columns */
+            @media (min-width: 1000px) {
+                grid-template-columns: repeat(10, 1fr);
+            }
+            gap: 0;
+        }
+
+        .grid-cell {
+            border: 1px solid #eee;
+            border-top: none;
+            border-left: none;
+            padding: 5px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 90px; /* Increased height to fit Date + Week No + Input */
+            background-color: white;
+        }
+        
+        .grid-cell:nth-child(10n) {
+            border-right: none; /* Remove right border on the 10th item in a row */
+        }
+
+        .week-info {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .start-date {
+            font-size: 10px;
+            color: #555;
+        }
+        
+        .week-no {
+            font-weight: 600;
+            color: #333;
+            font-size: 11px;
+        }
+
+        .capacity-input {
+            width: 90%;
+            padding: 2px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        /* --- Action Buttons --- */
+        .action-buttons {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .action-buttons button {
+            padding: 8px 16px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s;
+        }
+
+        .save-button {
+            background-color: #007bff;
+            color: white;
+        }
+        .save-button:hover { background-color: #0056b3; }
+
+        .cancel-button {
+            background-color: #6c757d;
+            color: white;
+        }
+        .cancel-button:hover { background-color: #5a6268; }
+
+        /* ========================================= */
+        /* === 3. Print Media Queries (User Provided) === */
+        /* ========================================= */
+        @media print {
+            @page {
+                size: auto; /* DIN A4 standard, Europe */
+                margin: 10mm 2mm 2mm 2mm;
+            }
+            html, body {
+                width: 100%;
+                font-size: 11px;
+                background: #FFF;
+                overflow: visible;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            table {
+                border-width: thin;
+                page-break-inside: auto;
+            }
+            tr.page-break {
+                display: block;
+                page-break-before: always;
+            }
+            thead {
+                display: table-header-group;
+            }
+            tfoot {
+                display: table-footer-group;
+            }
+            table th {
+                background-color: #EEEEFF;
+                border-top: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+            }
+            table td {
+                padding: 1px;
+                font-size: 7pt;
+            }
+            /* Reset for print if needed */
+            .capacity-grid { grid-template-columns: repeat(10, 1fr) !important; }
+            .grid-cell { height: 70px !important; }
+            .week-info { border-bottom: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="rptbody">
+        
+        <!-- Header / Filters -->
+        <div class="header-container">
+            <div class="column-logo">
+                Plant Capacity Master
+            </div>
+            <div class="column-header">
+                <!-- Dropdown 1: Plant -->
+                <div class="filter-group">
+                    <label for="selectPlant">Select Plant:</label>
+                    <select id="selectPlant">
+                        <option>Plant 1 - Jaipur</option>
+                        <option>Plant 2 - Delhi</option>
+                        <option>Plant 3 - Mumbai</option>
+                        <option>Plant 4 - Chennai</option>
+                    </select>
+                </div>
+                <!-- Dropdown 2: Process -->
+                <div class="filter-group">
+                    <label for="selectProcess">Select Process:</label>
+                    <select id="selectProcess">
+                        <option>Cutting</option>
+                        <option>Stitching</option>
+                        <option>Finishing</option>
+                        <option>Packing</option>
+                    </select>
+                </div>
+                <!-- Dropdown 3: Year (No Month/Date) -->
+                <div class="filter-group">
+                    <label for="selectYear">Select Year:</label>
+                    <select id="selectYear">
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 52-Week Capacity Grid -->
+        <div class="week-grid-container">
+            <div class="grid-title">
+                Capacity (Pairs/Units) for Year <span id="currentYear">2025</span>
+            </div>
+            
+            <div class="capacity-grid" id="capacityGrid">
+                <!-- 52 week cells will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="save-button" onclick="alert('Saving data...')">Save</button>
+            <button class="cancel-button" onclick="alert('Cancelling operation...')">Cancel</button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('capacityGrid');
+            const numWeeks = 52;
+            const yearSelect = document.getElementById('selectYear');
+            const yearSpan = document.getElementById('currentYear');
+            
+            // Helper function to calculate the simple start date of a week
+            // NOTE: This assumes Week 1 starts on Jan 1st of the year for simplicity.
+            function getStartOfWeek(year, weekNumber) {
+                // Parse year to ensure it's a number
+                const y = parseInt(year, 10);
+                // Create date for Jan 1 of the selected year
+                const date = new Date(y, 0, 1); 
+                
+                // Add (weekNumber - 1) * 7 days
+                date.setDate(date.getDate() + (weekNumber - 1) * 7); 
+                
+                // Format: "Jan 1"
+                const options = { month: 'short', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            }
+            
+            // Function to generate the 52 week cells
+            function generateCapacityGrid() {
+                grid.innerHTML = ''; // Clear existing content
+                const currentYearValue = yearSelect.value;
+                yearSpan.textContent = currentYearValue; // Update displayed year
+
+                for (let i = 1; i <= numWeeks; i++) {
+                    const weekNo = 'W' + i;
+                    const startDate = getStartOfWeek(currentYearValue, i);
+                    
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-cell');
+                    
+                    // Week Info Div (Date + Week Number)
+                    const weekInfoDiv = document.createElement('div');
+                    weekInfoDiv.classList.add('week-info');
+                    
+                    const startDateSpan = document.createElement('div');
+                    startDateSpan.classList.add('start-date');
+                    startDateSpan.textContent = startDate; // e.g., "Jan 1"
+                    
+                    const weekNoSpan = document.createElement('div');
+                    weekNoSpan.classList.add('week-no');
+                    weekNoSpan.textContent = weekNo; // e.g., "W1"
+
+                    weekInfoDiv.appendChild(startDateSpan);
+                    weekInfoDiv.appendChild(weekNoSpan);
+
+
+                    // Capacity Input Box
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = 0;
+                    input.min = 0;
+                    input.classList.add('capacity-input');
+                    input.setAttribute('data-week', i); // Useful for saving data
+                    
+                    // Assemble the cell
+                    cell.appendChild(weekInfoDiv);
+                    cell.appendChild(input);
+                    grid.appendChild(cell);
+                }
+            }
+
+            // Event listener to re-generate the grid when the year changes
+            yearSelect.addEventListener('change', generateCapacityGrid);
+            
+            // Initial grid generation
+            generateCapacityGrid();
+        });
+    </script>
+
+</body>
+</html>
